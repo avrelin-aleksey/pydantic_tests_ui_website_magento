@@ -4,7 +4,7 @@
 
 1. Установить необходимые зависимости, если они еще не установлены: pip install -r requirements.txt
 
-2. Запустить тесты: pytest -sv -n 2 --reruns 2 --alluredir=allure-results (Эта команда позволит запустить тесты
+2. Запустить тесты: pytest -sv -n 2 --reruns 2 --alluredir=allure-results (запускает тесты
 в 2 потока и повторно запускать проваленные тесты до 2 раз в случае их падения)
 
-3. Для анализа результатов тестирования с помощью Allure Report, команда: allure serve ./allure-results/
+3. Для анализа результатов, используем allure, команда: allure serve ./allure-results/
