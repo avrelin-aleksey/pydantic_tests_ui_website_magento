@@ -1,44 +1,61 @@
 import allure
 
-from faker import Faker
 from pages.locators import customer_locator as loc
 from pages.base_page import BasePage
-
-fake = Faker()
+from pages import data_for_test
 
 
 class CustomerPage(BasePage):
     page_url = "/customer/account/create/"
 
-    def customer_form(self, first_name, last_name, email, password):
-        self.find(loc.first_name_field_loc).send_keys(first_name)
-        self.find(loc.last_name_field_loc).send_keys(last_name)
-        self.find(loc.email_field_loc).send_keys(email)
-        self.find(loc.password_field_loc).send_keys(password)
-        self.driver.implicitly_wait(1)
-        self.find(loc.password_confirmation_loc).send_keys(password)
-        self.driver.implicitly_wait(1)
-
-    def customer_account_form(self):
+    def fill_new_customer_form_with_fake_data(self):
         with allure.step("Заполнение полей формы"):
-            first_name = fake.first_name()
-            last_name = fake.last_name()
-            email = fake.email()
-            password = fake.password()
-            self.customer_form(first_name, last_name, email, password)
+            test_data = {
+                "first_name": data_for_test.first_name,
+                "last_name": data_for_test.last_name,
+                "email": data_for_test.email,
+                "password": data_for_test.password
+            }
+            self.fill_customer_form(test_data)
 
-    def incorrect_password_empty_customer_account_form(self, password):
+    def fill_customer_form_with_invalid_password(self, password):
         with allure.step("Заполнение полей формы"):
-            first_name = fake.first_name()
-            last_name = fake.last_name()
-            email = fake.email()
-            self.customer_form(first_name, last_name, email, password)
+            test_data = {
+                "first_name": data_for_test.first_name,
+                "last_name": data_for_test.last_name,
+                "email": data_for_test.email,
+                "password": password
+            }
+            self.fill_customer_form(test_data)
 
-    def create_account_form(self):
-        with allure.step("Отправка формы по кнопке 'Create an Account'"):
+    def fill_customer_form(self, form_data):
+        with allure.step("Заполнение формы регистрации"):
+            self.find(loc.first_name_field_loc).send_keys(form_data["first_name"])
+            self.find(loc.last_name_field_loc).send_keys(form_data["last_name"])
+            self.find(loc.email_field_loc).send_keys(form_data["email"])
+            self.find(loc.password_field_loc).send_keys(form_data["password"])
+            self.find(loc.password_confirmation_loc).send_keys(form_data["password"])
+            self.driver.implicitly_wait(1)
+
+    def click_create_account_button(self):
+        with allure.step("Нажать кнопку 'Create an Account'"):
             self.find(loc.button_create_an_account).click()
 
-    def assert_result(self, locator, text):
-        with allure.step("Сравнение полученного результата с ожидаемым"):
-            result_text = self.wait_until_visible(locator).text
-            assert result_text == text, f"Фактический текст: '{result_text}'"
+    def verify_success_message(self, expected_text):
+        self.assert_result("success_message", expected_text)
+
+    def verify_password_error_message(self, expected_text):
+        self.assert_result("password_error", expected_text)
+
+    def assert_result(self, field_name, expected_text):
+        locators = {
+            "success_message": loc.success_message_loc,
+            "password_error": loc.error_message_password_8symbols_loc
+        }
+
+        with allure.step(f"Сравнение полученного результата '{field_name}' с ожидаемым"):
+            result_text = self.wait_until_visible(locators[field_name]).text
+            assert result_text == expected_text, (
+                f"Ожидалось: '{expected_text}', "
+                f"фактический текст: '{result_text}'"
+            )

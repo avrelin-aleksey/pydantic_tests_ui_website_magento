@@ -1,30 +1,35 @@
 import allure
+from pages import data_for_test
 
-@allure.feature("Страница товаров")
-class TestAccountCreation:
-    error_password_message = (
-        "Minimum length of this field must be equal or greater than 8 symbols."
-        " Leading and trailing spaces will be ignored."
-    )
-    success_message = "Thank you for registering with Main Website Store."
-
-    @allure.title("Успешное добавления товара после фильтрации в сравнение")
-    def test_successful_account_creation(self, collection_page):
+@allure.feature("Работа с коллекциями товаров")
+class TestProductCollections:
+    @allure.title("Применение фильтров к коллекции товаров")
+    def test_apply_product_filters(self, collection_page):
         # Открыть страницу
         collection_page.open_page()
+
         # Выбор в меню STYLE(Tee) - SIZE(XL) - CLIMATE(Indoor) - COLOR(blue)
-        collection_page.click_menu()
+        collection_page.apply_product_filters(data_for_test.filters)
+
         # Проверить список всех добавленных фильтров
-        collection_page.verify_filters()
+        collection_page.verify_applied_filters(data_for_test.filters)
+
+    @allure.title("Добавление товаров в сравнение")
+    def test_add_products_to_compare(self, collection_page):
+        # Открыть страницу
+        collection_page.open_page()
+
         # Поменять цвет первого товара на белый
-        collection_page.change_color_tee_first()
+        collection_page.change_first_tee_color_to_white()
+
         # Добавить первый товар в сравнение
-        collection_page.add_to_compare(1)
+        collection_page.add_product_to_compare(1)
+
         # Добавить второй товар в сравнение
-        collection_page.add_to_compare(2)
+        collection_page.add_product_to_compare(2)
+
         # Нажать кнопку сравнения в уведомлении
-        collection_page.click_button_compare()
+        collection_page.click_compare_button_in_notification()
+
         # Проверка что на странице есть два добавленных в сравнение товара
-        collection_page.verify_two_product_items()
-        # Проверка удаления
-        collection_page.verify_two_product_items()
+        collection_page.verify_compare_list_has_products(2)

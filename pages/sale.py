@@ -15,7 +15,7 @@ class SalePage(BasePage):
             page_title == expected_title
         ), f"Заголовок страницы не совпадает: {page_title} != {expected_title}"
 
-    def verify_promo_blocks(self, expected_data):
+    def assert_promo_blocks_match_expected(self, expected_data):
         promo_blocks = self.find_all(loc.promo_blocks_loc)
         print(f"Найдено ссылок с акциями: {len(promo_blocks)}")
 

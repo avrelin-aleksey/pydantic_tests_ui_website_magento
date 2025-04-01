@@ -1,38 +1,37 @@
 import allure
 import pytest
 
-from pages.locators import customer_locator as loc
+from pages import data_for_test
 
 
 @allure.feature("Создание аккаунта")
-class TestAccountCreation:
-    error_password_message = (
-        "Minimum length of this field must be equal or greater than 8 symbols."
-        " Leading and trailing spaces will be ignored."
-    )
-    success_message = "Thank you for registering with Main Website Store."
+class TestCustomerRegistration:
 
-    @allure.title("Успешное создание аккаунта")
+    @allure.title("Успешная регистрация нового пользователя")
     def test_successful_account_creation(self, customer_page):
         # Открыть страницу
         customer_page.open_page()
-        # Заполнить форму
-        customer_page.customer_account_form()
-        # Нажать кнопку 'Create an Account'
-        customer_page.create_account_form()
-        # Сравнить ожидаемый результат и фактический
-        customer_page.assert_result(loc.success_message_loc, self.success_message)
 
-    @allure.title("Попытка создания аккаунта с некорректным паролем (менш")
+        # Заполнить форму валидными данными
+        customer_page.fill_new_customer_form_with_fake_data()
+
+        # Нажать кнопку 'Create an Account'
+        customer_page.click_create_account_button()
+
+        # Сравнить ожидаемый результат и фактический
+        customer_page.verify_success_message(data_for_test.success_message)
+
+    @allure.title("Попытка регистрации с некорректным паролем")
     @pytest.mark.parametrize("password", ["243234", "a", "ssss", "ADas!@d"])
-    def test_invalid_password(self, customer_page, password):
+    def test_registration_with_invalid_password(self, customer_page, password):
         # Открыть страницу
         customer_page.open_page()
+
         # Заполнить форму паролем меньше 8 символов
-        customer_page.incorrect_password_empty_customer_account_form(password)
+        customer_page.fill_customer_form_with_invalid_password(password)
+
         # Нажать кнопку 'Create an Account'
-        customer_page.create_account_form()
+        customer_page.click_create_account_button()
+
         # Сравнить ожидаемый результат и фактический
-        customer_page.assert_result(
-            loc.error_message_password_8symbols_loc, self.error_password_message
-        )
+        customer_page.verify_password_error_message(data_for_test.error_password_message)
