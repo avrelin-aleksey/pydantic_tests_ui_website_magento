@@ -8,17 +8,7 @@ from pages import data_for_test
 class CustomerPage(BasePage):
     page_url = "/customer/account/create/"
 
-    def fill_new_customer_form_with_fake_data(self):
-        with allure.step("Заполнение полей формы"):
-            test_data = {
-                "first_name": data_for_test.first_name,
-                "last_name": data_for_test.last_name,
-                "email": data_for_test.email,
-                "password": data_for_test.password
-            }
-            self.fill_customer_form(test_data)
-
-    def fill_customer_form_with_invalid_password(self, password):
+    def fill_customer_form_with_password(self, password):
         with allure.step("Заполнение полей формы"):
             test_data = {
                 "first_name": data_for_test.first_name,
@@ -26,6 +16,7 @@ class CustomerPage(BasePage):
                 "email": data_for_test.email,
                 "password": password
             }
+            self.driver.implicitly_wait(1)
             self.fill_customer_form(test_data)
 
     def fill_customer_form(self, form_data):
@@ -35,7 +26,7 @@ class CustomerPage(BasePage):
             self.find(loc.email_field_loc).send_keys(form_data["email"])
             self.find(loc.password_field_loc).send_keys(form_data["password"])
             self.find(loc.password_confirmation_loc).send_keys(form_data["password"])
-            self.driver.implicitly_wait(1)
+            self.driver.implicitly_wait(2)
 
     def click_create_account_button(self):
         with allure.step("Нажать кнопку 'Create an Account'"):
@@ -59,3 +50,4 @@ class CustomerPage(BasePage):
                 f"Ожидалось: '{expected_text}', "
                 f"фактический текст: '{result_text}'"
             )
+            self.driver.implicitly_wait(1)

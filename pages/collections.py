@@ -44,11 +44,12 @@ class CollectionPage(BasePage):
     def change_first_tee_color_to_white(self):
         with allure.step("Изменение цвета первого товара на белый"):
             self.find(loc.color_tee_first_wight_loc).click()
-            self.driver.implicitly_wait(1)
+            self.driver.implicitly_wait(2)
 
     def add_product_to_compare(self, product_number):
         product_locator = ("xpath", f"(//div[@class='product details product-item-details'])[{product_number}]")
         compare_locator = ("xpath", f"(//div/a[@class='action tocompare'])[{product_number}]")
+        self.driver.implicitly_wait(1)
 
         with allure.step(f"Добавление товара #{product_number} в сравнение"):
             actions = ActionChains(self.driver)
@@ -62,4 +63,5 @@ class CollectionPage(BasePage):
     def verify_compare_list_has_products(self, expected_count):
         with allure.step(f"Проверка что в сравнении {expected_count} товара(ов)"):
             product_items = self.find_all(loc.product_items_loc)
+            print(product_items)
             assert len(product_items) == expected_count

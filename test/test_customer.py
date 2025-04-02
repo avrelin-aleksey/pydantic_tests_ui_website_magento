@@ -13,7 +13,8 @@ class TestCustomerRegistration:
         customer_page.open_page()
 
         # Заполнить форму валидными данными
-        customer_page.fill_new_customer_form_with_fake_data()
+        password = "А2312!asd"
+        customer_page.fill_customer_form_with_password(password)
 
         # Нажать кнопку 'Create an Account'
         customer_page.click_create_account_button()
@@ -28,7 +29,7 @@ class TestCustomerRegistration:
         customer_page.open_page()
 
         # Заполнить форму паролем меньше 8 символов
-        customer_page.fill_customer_form_with_invalid_password(password)
+        customer_page.fill_customer_form_with_password(password)
 
         # Нажать кнопку 'Create an Account'
         customer_page.click_create_account_button()
