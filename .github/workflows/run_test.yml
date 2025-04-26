@@ -59,12 +59,14 @@ jobs:
         with:
           name: allure-history  # изменил с allure-results так как конфликт с run-tests
           path: allure-history  
-          retention-days: 5  
+          retention-days: 5
+        
 
           
   setup-environment:
       name: Setup environment
       runs-on: ubuntu-latest
+      # needs: download-history
       steps:
       - name: Checkout autotest
         uses: actions/checkout@v4
