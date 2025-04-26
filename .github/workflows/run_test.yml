@@ -27,16 +27,33 @@ jobs:
         with:
           python-version: '3.10'  
       - name: Install Python dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install allure-pytest
+      - name: Install java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'microsoft' 
+          java-version: '17'
+      - name: Install Allure
+        run: sudo apt-get install -y allure
       - name: Run all test  
         if: "github.event.inputs.deplowment_target == 'all'"
-        run: pytest -vs -n 3 --reruns 2
+        run: pytest -vs -n 3 --reruns 2 --alluredir=allure-results
       - name: Run smoke test  
         if: "github.event.inputs.deplowment_target == 'smoke'"
-        run: pytest -vs -n 3 -m smoke --reruns 2
+        run: pytest -vs -n 3 -m smoke --reruns 2 --alluredir=allure-results
       - name: Run regression test  
         if: "github.event.inputs.deplowment_target == 'regression'"
-        run: pytest -vs -n 3 -m regression --reruns 2
+        run: pytest -vs -n 3 -m regression --reruns 2 --alluredir=allure-results
       - name: Run extended test  
         if: "github.event.inputs.deplowment_target == 'extended'"
-        run: pytest -vs -n 3 -m extended --reruns 2
+        run: pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
+      - name: Generate Allure report
+        run: allure generate allure-results -o allure-report
+      - name: Save Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+          retention-days: 1
