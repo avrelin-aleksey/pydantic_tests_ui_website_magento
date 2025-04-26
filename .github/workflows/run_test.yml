@@ -180,14 +180,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: allure-report
-          path: ./public
-  
-      - name: Verify report
+          
+      - name: Verify report structure
         run: |
-          [ ! -f "./public/index.html" ] && echo "ERROR: Downloaded report is invalid" && exit 1
-          echo "Report verified"
-  
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v2
+          echo "=== Report content ==="
+          ls -la
+          [ ! -f "index.html" ] && echo "ERROR: Report is invalid" && exit 1
+          
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          artifact_name: 'allure-report'
+          path: .
+          
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v3
