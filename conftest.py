@@ -1,7 +1,8 @@
-from selenium import webdriver
 import allure
 import pytest
+import os
 
+from selenium import webdriver
 from selenium import webdriver
 from pages.collections import CollectionPage
 from pages.customer import CustomerPage
