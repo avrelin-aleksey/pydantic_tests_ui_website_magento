@@ -1,1 +1,20 @@
+name: Python auto
+
+on: [push]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-lastes
+    name: Run autotest
+    steps:
+      - name: Checkout autotest
+        uses: actions/checkout@v4
+      - name: Set up Python enviroment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13' 
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: run test
+        run: pytest
 
