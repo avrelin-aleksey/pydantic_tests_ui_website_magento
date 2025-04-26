@@ -128,14 +128,14 @@ jobs:
   generate-report:
     runs-on: ubuntu-latest
     needs: run-tests
-    name: Generate report
+    name: Generate Allure Report
     steps:
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          distribution: 'microsoft'
+          distribution: 'temurin'
           java-version: '17'
-      
+  
       - name: Install Allure
         run: |
           sudo wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
@@ -149,48 +149,25 @@ jobs:
           name: allure-results-${{ github.run_id }}
           path: allure-results
   
-      - name: Generate Allure report
+      - name: Generate report
         run: |
-          mkdir -p ./allure-report
-          allure generate ./allure-results -o ./allure-report --clean
+          mkdir -p ./public
+          allure generate ./allure-results -o ./public --clean
           echo "=== Report content ==="
-          ls -la ./allure-report/
+          ls -la ./public/
   
-      - name: Verify report
-        run: |
-          [ ! -f "./allure-report/index.html" ] && echo "ERROR: Report generation failed" && exit 1
-          echo "Report generated successfully"
-  
-      - name: Upload report
-        uses: actions/upload-artifact@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          name: allure-report
-          path: ./allure-report
-          retention-days: 1
+          path: ./public
   
   publish-report:
     runs-on: ubuntu-latest
     needs: generate-report
-    name: Publish Report
+    name: Deploy to GitHub Pages
     permissions:
       pages: write
       id-token: write
     steps:
-      - name: Download report
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-report
-          
-      - name: Verify report structure
-        run: |
-          echo "=== Report content ==="
-          ls -la
-          [ ! -f "index.html" ] && echo "ERROR: Report is invalid" && exit 1
-          
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: .
-          
-      - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v3
+      - name: Deploy
+        uses: actions/deploy-pages@v4
