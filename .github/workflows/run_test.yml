@@ -21,31 +21,10 @@ permissions:
 
 
   
-jobs:
-  setup-environment:
-      name: Setup environment
-      runs-on: ubuntu-latest
-      steps:
-      - name: Checkout autotest
-        uses: actions/checkout@v4
-      - name: Set up Python environment
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10' 
-      - name: Install Python dependencies
-        run: pip install -r requirements.txt
-      - name: Download history artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-history
-          path: allure-results/history
-
-
-      
+jobs:      
   download-history:
     runs-on: ubuntu-latest
     name: Download history
-    needs: setup-environment
     steps:
       - run: >
           ARTIFACT_ID=$(curl -L 
@@ -81,11 +60,32 @@ jobs:
           name: allure-history  # изменил с allure-results так как конфликт с run-tests
           path: allure-history  
           retention-days: 5  
-  
+
+          
+  setup-environment:
+      name: Setup environment
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout autotest
+        uses: actions/checkout@v4
+      - name: Set up Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      - name: Download history artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-history
+          path: allure-results/history
+        continue-on-error: true
+
+          
   run-tests:
     runs-on: ubuntu-latest
     name: Run autotest
-    needs: download-history
+    needs: setup-environment
     steps:
       - name: Run all test  
         if: ${{ github.event.inputs.deployment_target == 'all' }}
