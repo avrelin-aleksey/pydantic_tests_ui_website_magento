@@ -11,20 +11,11 @@ from pages.sale import SalePage
 def driver():
     options = Options()
     options.page_load_strategy = "eager"
-    
-    # Настройки для CI 
-    if os.getenv('CI') == 'true':
-        options.add_argument("--headless")
-        options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--disable-gpu")
-        service = Service(executable_path='/usr/bin/chromedriver')
-    else:
-        # Настройки для локального запуска
-        options.add_experimental_option("detach", True)
-        service = Service()
-    
-    driver = webdriver.Chrome(service=service, options=options)
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    driver = webdriver.Chrome(options=options)
     driver.maximize_window()
     
     yield driver
