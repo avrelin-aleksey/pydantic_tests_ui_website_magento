@@ -1,4 +1,4 @@
-name: Python autotest
+name: Python autotest without story
 
 on: 
   workflow_dispatch:
