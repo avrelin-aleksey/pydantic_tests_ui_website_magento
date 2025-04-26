@@ -28,9 +28,15 @@ jobs:
           python-version: '3.10'  
       - name: Install Python dependencies
         run: pip install -r requirements.txt
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-      - name: Run test  
-        run: pytest --reruns 2
+      - name: Run all test  
+        if: "github.event.inputs.deplowment_target == 'all'"
+        run: pytest
+      - name: Run smoke test  
+        if: "github.event.inputs.deplowment_target == 'smoke'"
+        run: pytest
+      - name: Run regression test  
+        if: "github.event.inputs.deplowment_target == 'regression'"
+        run: pytest
+      - name: Run extended test  
+        if: "github.event.inputs.deplowment_target == 'extended'"
+        run: pytest
