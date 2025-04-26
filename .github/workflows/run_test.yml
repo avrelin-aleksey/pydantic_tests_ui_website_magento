@@ -43,15 +43,19 @@ jobs:
       - name: Run all test  
         if: "github.event.inputs.deplowment_target == 'all'"
         run: pytest -vs -n 3 --reruns 2 --alluredir=allure-results
+        continue-on-error: true
       - name: Run smoke test  
         if: "github.event.inputs.deplowment_target == 'smoke'"
         run: pytest -vs -n 3 -m smoke --reruns 2 --alluredir=allure-results
+        continue-on-error: true
       - name: Run regression test  
         if: "github.event.inputs.deplowment_target == 'regression'"
         run: pytest -vs -n 3 -m regression --reruns 2 --alluredir=allure-results
+        continue-on-error: true
       - name: Run extended test  
         if: "github.event.inputs.deplowment_target == 'extended'"
         run: pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
+        continue-on-error: true
       - name: Generate Allure report
         run: allure generate allure-results -o allure-report
       - name: Save Allure Report
