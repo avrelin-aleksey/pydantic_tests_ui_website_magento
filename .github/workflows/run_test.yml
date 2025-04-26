@@ -101,7 +101,7 @@ jobs:
       - name: Save Allure Report
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ github.run_id }}-${{ github.job }}
+          name: allure-results
           path:
             allure-results
           retention-days: 1
