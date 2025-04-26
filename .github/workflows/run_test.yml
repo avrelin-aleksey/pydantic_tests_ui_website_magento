@@ -130,32 +130,64 @@ jobs:
     needs: run-tests
     name: Generate report
     steps:
-      - uses: actions/setup-java@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
         with:
-          distribution: 'microsoft' 
+          distribution: 'microsoft'
           java-version: '17'
-      - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.23.1/allure-2.23.1.tgz && sudo tar -zxvf allure-2.23.1.tgz -C /opt/ && sudo ln -s /opt/allure-2.23.1/bin/allure /usr/bin/allure
-      - name: Download all workflow run artifacts
+      
+      - name: Install Allure
+        run: |
+          sudo wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
+          sudo tar -zxvf allure-2.24.0.tgz -C /opt/
+          sudo ln -sf /opt/allure-2.24.0/bin/allure /usr/bin/allure
+          allure --version
+  
+      - name: Download test results
         uses: actions/download-artifact@v4
-      - run: allure generate -c allure-results -o _site
-      - name: Store generated report
+        with:
+          name: allure-results-${{ github.run_id }}
+          path: allure-results
+  
+      - name: Generate Allure report
+        run: |
+          mkdir -p ./allure-report
+          allure generate ./allure-results -o ./allure-report --clean
+          echo "=== Report content ==="
+          ls -la ./allure-report/
+  
+      - name: Verify report
+        run: |
+          [ ! -f "./allure-report/index.html" ] && echo "ERROR: Report generation failed" && exit 1
+          echo "Report generated successfully"
+  
+      - name: Upload report
         uses: actions/upload-artifact@v4
         with:
-          name: _site
-          path:
-            _site
+          name: allure-report
+          path: ./allure-report
           retention-days: 1
-
+  
   publish-report:
     runs-on: ubuntu-latest
     needs: generate-report
-    name: Report publication
+    name: Publish Report
+    permissions:
+      pages: write
+      id-token: write
     steps:
-      - name: Download all workflow run artifacts
+      - name: Download report
         uses: actions/download-artifact@v4
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        with:
+          name: allure-report
+          path: ./public
+  
+      - name: Verify report
+        run: |
+          [ ! -f "./public/index.html" ] && echo "ERROR: Downloaded report is invalid" && exit 1
+          echo "Report verified"
+  
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-      
+        uses: actions/deploy-pages@v2
+        with:
+          artifact_name: 'allure-report'
