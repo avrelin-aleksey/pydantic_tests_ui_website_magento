@@ -1,4 +1,4 @@
-name: Python autotest
+name: Python autotest-2
 
 on:
   workflow_dispatch:
