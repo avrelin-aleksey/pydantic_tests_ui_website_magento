@@ -69,10 +69,18 @@ jobs:
           mkdir -p old_pages
           unzip pages.zip -d old_pages
           tar -xvf old_pages/artifact.tar -C pages_history
+          
+          # Diagnostics - print the content of the pages_history folder
+          echo "Contents of pages_history directory:"
+          ls -R pages_history
         continue-on-error: true
 
       - name: Copy history
-        run: cp pages_history/history/* allure-history && cp -r pages_history/history allure-history
+        run: |
+          echo "Checking contents of pages_history/history before copying..."
+          ls -R pages_history/history
+          cp pages_history/history/* allure-history && cp -r pages_history/history allure-history
+        continue-on-error: true
 
       - name: Store allure history
         uses: actions/upload-artifact@v4
@@ -80,6 +88,7 @@ jobs:
           name: allure-history
           path: allure-history  
           retention-days: 5
+
 
         
 
