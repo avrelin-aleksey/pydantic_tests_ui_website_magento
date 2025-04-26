@@ -26,31 +26,38 @@ jobs:
     runs-on: ubuntu-latest
     name: Download history
     steps:
-      - run: >
-          ARTIFACT_ID=$(curl -L 
-          -H "Accept: application/vnd.github+json" 
-          -H "X-GitHub-Api-Version: 2022-11-28" 
-          "https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts?name=allure-history" 
-          | python -c "import sys, json; print(json.load(sys.stdin)['artifacts'][0]['id']);") 
-          &&
-          curl -L 
-          -H "Accept: application/vnd.github+json" 
-          -H "Authorization: Bearer ${{ secrets.TOKEN }}" 
-          -H "X-GitHub-Api-Version: 2022-11-28" 
-          https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts/$ARTIFACT_ID/zip 
-          -o artifacts.zip &&
-          REPORT_ID=$(curl -L 
-          -H "Accept: application/vnd.github+json" 
-          -H "X-GitHub-Api-Version: 2022-11-28" 
-          "https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts?name=github-pages" 
-          | python -c "import sys, json; print(json.load(sys.stdin)['artifacts'][0]['id']);") 
-          &&
-          curl -L 
-          -H "Accept: application/vnd.github+json" 
-          -H "Authorization: Bearer ${{ secrets.TOKEN }}" 
-          -H "X-GitHub-Api-Version: 2022-11-28" 
-          https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts/$REPORT_ID/zip 
-          -o pages.zip
+      - run: |
+          get_artifact_id() {
+            ARTIFACT_NAME=$1
+            ARTIFACTS=$(curl -sL -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts")
+            
+            echo "$ARTIFACTS" | python -c "import sys, json; artifacts=json.load(sys.stdin)['artifacts']; print(next((a['id'] for a in artifacts if a['name'] == '$ARTIFACT_NAME'), ''))"
+          }
+          
+          ARTIFACT_ID=$(get_artifact_id "allure-history")
+          if [ -n "$ARTIFACT_ID" ]; then
+            curl -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts/$ARTIFACT_ID/zip \
+              -o artifacts.zip
+          else
+            echo "No allure-history artifact found"
+          fi
+          REPORT_ID=$(get_artifact_id "github-pages")
+          if [ -n "$REPORT_ID" ]; then
+            curl -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts/$REPORT_ID/zip \
+              -o pages.zip
+          else
+            echo "No github-pages artifact found"
+          fi
       - run: mkdir allure-history && unzip artifacts.zip -d allure-history
       - run: mkdir old_pages pages_history && unzip pages.zip -d old_pages && tar -xvf old_pages/artifact.tar -C pages_history
       - run: cp pages_history/history/* allure-history && cp -r pages_history/history allure-history
@@ -66,7 +73,7 @@ jobs:
   setup-environment:
       name: Setup environment
       runs-on: ubuntu-latest
-      # needs: download-history
+      needs: download-history
       steps:
       - name: Checkout autotest
         uses: actions/checkout@v4
