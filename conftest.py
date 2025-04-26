@@ -13,10 +13,21 @@ from selenium.webdriver.chrome.options import Options
 @pytest.fixture()
 def driver():
     options = Options()
-    options.add_experimental_option("detach", True)
     options.page_load_strategy = "eager"
+
+    if os.getenv('CI') == 'true':
+        options.add_argument("--headless")  # Без графического интерфейса
+        options.add_argument("--no-sandbox")  # Необходимо для Linux
+        options.add_argument("--disable-dev-shm-usage")  # Для ограниченных ресурсов
+        options.add_argument("--disable-gpu")  # Отключение GPU в CI
+        service = Service(executable_path='/usr/bin/chromedriver')
+    else:    
+        options.add_experimental_option("detach", True)
+        service = Service()
+        
     chrome_driver = webdriver.Chrome(options=options)
     chrome_driver.maximize_window()
+    
     yield chrome_driver
     chrome_driver.quit()
 
