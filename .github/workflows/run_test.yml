@@ -131,6 +131,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: allure-results
+        continue-on-error: true
       - name: Generate Allure report
         run: allure generate allure-results -o _site
       - name: Save Allure Report
