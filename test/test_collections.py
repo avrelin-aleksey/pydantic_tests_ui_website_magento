@@ -1,6 +1,9 @@
 import allure
+import pytest
+
 from pages import data_for_test
 
+@pytest.mark.smoke
 @allure.feature("Работа с коллекциями товаров")
 class TestProductCollections:
 

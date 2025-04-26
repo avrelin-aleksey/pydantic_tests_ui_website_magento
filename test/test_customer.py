@@ -3,7 +3,7 @@ import pytest
 
 from pages import data_for_test
 
-
+@pytest.mark.extended
 @allure.feature("Создание аккаунта")
 class TestCustomerRegistration:
 
