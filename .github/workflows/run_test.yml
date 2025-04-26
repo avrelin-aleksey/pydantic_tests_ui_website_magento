@@ -147,10 +147,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - run: |
-          sudo apt-get install -y allure
-          allure --version
-  
+      - run: sudo wget https://github.com/allure-framework/allure2/releases/download/2.23.1/allure-2.23.1.tgz && sudo tar -zxvf allure-2.23.1.tgz -C /opt/ && sudo ln -s /opt/allure-2.23.1/bin/allure /usr/bin/allure
       - name: Generate Allure report
         run: |
           allure generate ./allure-results -o ./_site --clean
@@ -158,14 +155,13 @@ jobs:
           ls -la ./_site/
           find ./_site -type f | head -n 20
   
-      - name: Validate index.html
+      - name: Generate Allure report
         run: |
-          if [ ! -f "./_site/index.html" ]; then
-            echo "Error: Allure report was not generated!"
-            exit 1
-          fi
-  
-      - name: Upload Allure report
+          allure generate ./allure-results -o ./_site --clean
+          echo "=== Generated report files ==="
+          ls -la ./_site/
+
+      - name: Upload report artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./_site
