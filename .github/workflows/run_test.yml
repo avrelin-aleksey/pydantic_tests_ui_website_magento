@@ -64,6 +64,7 @@ jobs:
           name: allure-results
           path:
             allure-results
+          overwrite: true 
           retention-days: 1
   
   run-tests:
