@@ -29,4 +29,4 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements.txt
       - name: Run test  
-        run: pytest -v
+        run: pytest -vs -n 3 --reruns 2
