@@ -48,9 +48,29 @@ jobs:
           unzip artifacts.zip -d allure-history
         continue-on-error: true
 
-      - name: Unzip pages.zip
-        run: mkdir old_pages pages_history && unzip pages.zip -d old_pages && tar -xvf old_pages/artifact.tar -C pages_history
-        
+      - name: Download pages artifact
+        run: |
+          set -e
+          REPORT_ID=$(curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts?name=github-pages" \
+            | python -c "import sys, json; artifacts = json.load(sys.stdin)['artifacts']; print(artifacts[0]['id'] if artifacts else '')")
+          if [ -z "$REPORT_ID" ]; then
+            echo "No github-pages artifact found. Skipping download."
+            exit 0
+          fi
+          curl -L \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/avrelin-aleksey/ui_website_magento/actions/artifacts/$REPORT_ID/zip \
+            -o pages.zip
+          mkdir -p old_pages
+          unzip pages.zip -d old_pages
+          tar -xvf old_pages/artifact.tar -C pages_history
+        continue-on-error: true
+
       - name: Copy history
         run: cp pages_history/history/* allure-history && cp -r pages_history/history allure-history
 
@@ -60,6 +80,7 @@ jobs:
           name: allure-history
           path: allure-history  
           retention-days: 5
+
         
 
           
