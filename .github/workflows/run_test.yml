@@ -41,19 +41,19 @@ jobs:
           sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
           echo "/opt/allure-2.24.0/bin" >> $GITHUB_PATH
       - name: Run all test  
-        if: "github.event.inputs.deplowment_target == 'all'"
+        if: "github.event.inputs.deployment_target == 'all'"
         run: pytest -vs -n 3 --reruns 2 --alluredir=allure-results
         continue-on-error: true
       - name: Run smoke test  
-        if: "github.event.inputs.deplowment_target == 'smoke'"
+        if: "github.event.inputs.deployment_target == 'smoke'"
         run: pytest -vs -n 3 -m smoke --reruns 2 --alluredir=allure-results
         continue-on-error: true
       - name: Run regression test  
-        if: "github.event.inputs.deplowment_target == 'regression'"
+        if: "github.event.inputs.deployment_target == 'regression'"
         run: pytest -vs -n 3 -m regression --reruns 2 --alluredir=allure-results
         continue-on-error: true
       - name: Run extended test  
-        if: "github.event.inputs.deplowment_target == 'extended'"
+        if: "github.event.inputs.deployment_target == 'extended'"
         run: pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
         continue-on-error: true
       - name: Generate Allure report
