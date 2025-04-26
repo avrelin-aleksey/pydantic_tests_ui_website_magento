@@ -3,7 +3,7 @@ name: Python autotest
 on: 
   workflow_dispatch:
     inputs:
-      deplowment_target:
+      deployment_target:
         description: choose test set
         required: true
         type: choice
@@ -57,10 +57,23 @@ jobs:
         run: pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
         continue-on-error: true
       - name: Generate Allure report
-        run: allure generate allure-results -o allure-report
+        run: allure generate allure-results -o _site
       - name: Save Allure Report
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: allure-report
+          name: _site
+          path: _site
           retention-days: 1
+          
+  publish-report:
+    name: Report publication
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+
