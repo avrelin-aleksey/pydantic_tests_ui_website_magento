@@ -19,8 +19,7 @@ def driver():
     chrome_driver = webdriver.Chrome(options=options)
     chrome_driver.maximize_window()
     yield chrome_driver
-    if request.node.rep_call.failed:
-        chrome_driver.save_screenshot(f'screen_fail_{random.randrange(1, 10000)}.png')
+    chrome_driver.save_screenshot(f'screen{random.randrange(1, 10000)}.png')
     chrome_driver.quit()
 
 
@@ -36,4 +35,3 @@ def collection_page(driver):
 @pytest.fixture()
 def sale_page(driver):
     return SalePage(driver)
-
