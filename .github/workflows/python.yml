@@ -71,7 +71,7 @@ jobs:
       - name: Store allure history
         uses: actions/upload-artifact@v4
         with:
-          name: allure-history  # Изменено имя артефакта
+          name: allure-history 
           path: allure-history
           retention-days: 1
 
@@ -109,7 +109,7 @@ jobs:
       - name: Download history artifacts
         uses: actions/download-artifact@v4
         with:
-          name: allure-history  # Загружаем историю под новым именем
+          name: allure-history  
           path: allure-results/history
           
       - name: Register custom marks
@@ -154,7 +154,7 @@ jobs:
       - name: Upload allure results
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results
+          name: allure-results-${{ github.run_id }}
           path: allure-results
           retention-days: 1
           overwrite: true
@@ -178,7 +178,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: allure-results
+          name: allure-results-${{ github.run_id }}
           path: allure-results
         
       - name: Generate Allure report
