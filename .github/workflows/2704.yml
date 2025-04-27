@@ -1,4 +1,4 @@
-name: Python autotest full steps
+name: Python autotest full steps 27/04
 
 on:
   workflow_dispatch:
