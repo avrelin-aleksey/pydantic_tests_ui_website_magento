@@ -126,8 +126,7 @@ jobs:
           name: allure-results-${{ github.run_id }}-${{ github.run_attempt }}
           path: allure-results
       - name: Generate Allure report
-        run: |
-          allure generate -c allure-results -o _site
+        run:  allure generate -c allure-results -o _site
       - name: Store generated report
         uses: actions/upload-artifact@v4
         with:
