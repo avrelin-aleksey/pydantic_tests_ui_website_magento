@@ -155,7 +155,7 @@ jobs:
           name: allure-results
           path: allure-results
           retention-days: 1
-        overwrite: true
+          overwrite: true
 
   generate-report:
     runs-on: ubuntu-latest
