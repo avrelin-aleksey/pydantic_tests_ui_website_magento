@@ -89,24 +89,17 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         
-      - name: Run smoke tests
-        if: ${{ github.event.inputs.deployment_target == 'smoke' }}
-        run: pytest -vs -n 3 -m smoke --reruns 2 --alluredir=allure-results
-        continue-on-error: true
-        
-      - name: Run regression tests
-        if: ${{ github.event.inputs.deployment_target == 'regression' }}
-        run: pytest -vs -n 3 -m regression --reruns 2 --alluredir=allure-results
-        continue-on-error: true
-        
-      - name: Run extended tests
-        if: ${{ github.event.inputs.deployment_target == 'extended' }}
-        run: pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
-        continue-on-error: true
-        
-      - name: Run all tests
-        if: ${{ github.event.inputs.deployment_target == 'all' }}
-        run: pytest -vs -n 3 --reruns 2 --alluredir=allure-results
+      - name: Run tests based on deployment target
+        run: |
+          if [ "${{ github.event.inputs.deployment_target }}" == "all" ]; then
+            pytest -vs -n 3 --reruns 2 --alluredir=allure-results
+          elif [ "${{ github.event.inputs.deployment_target }}" == "smoke" ]; then
+            pytest -vs -n 3 -m smoke --reruns 2 --alluredir=allure-results
+          elif [ "${{ github.event.inputs.deployment_target }}" == "regression" ]; then
+            pytest -vs -n 3 -m regression --reruns 2 --alluredir=allure-results
+          elif [ "${{ github.event.inputs.deployment_target }}" == "extended" ]; then
+            pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
+          fi
         continue-on-error: true
         
       - name: Store allure results
