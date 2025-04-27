@@ -1,6 +1,6 @@
 name: Python autotest without story
 
-on: 
+on: [push]
   workflow_dispatch:
     inputs:
       deployment_target:
