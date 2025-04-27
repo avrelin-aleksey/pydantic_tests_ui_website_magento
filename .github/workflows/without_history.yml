@@ -1,6 +1,6 @@
 name: Python autotest without history
 
-on: 
+on:
   workflow_dispatch:
     inputs:
       deployment_target:
@@ -10,7 +10,7 @@ on:
         default: smoke
         options:
           - smoke
-          - regretion
+          - regression
           - extended
           - all
       
