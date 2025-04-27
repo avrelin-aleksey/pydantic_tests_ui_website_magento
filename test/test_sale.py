@@ -4,7 +4,7 @@ import pytest
 from pages import data_for_test
 
 
-@pytest.mark.regretion
+@pytest.mark.regression
 @allure.feature("Страница SALE")
 class TestAccountCreation:
     @allure.title("Проверка ссылок на странице SALE")
