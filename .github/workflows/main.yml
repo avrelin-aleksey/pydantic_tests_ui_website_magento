@@ -90,22 +90,22 @@ jobs:
         uses: actions/download-artifact@v4
         
       - name: Run smoke tests
-        if: "github.event.inputs.deployment_target == 'smoke'"
+        if: ${{ github.event.inputs.deployment_target == 'smoke' }}
         run: pytest -vs -n 3 -m smoke --reruns 2 --alluredir=allure-results
         continue-on-error: true
         
       - name: Run regression tests
-        if: "github.event.inputs.deployment_target == 'regression'"
+        if: ${{ github.event.inputs.deployment_target == 'regression' }}
         run: pytest -vs -n 3 -m regression --reruns 2 --alluredir=allure-results
         continue-on-error: true
         
       - name: Run extended tests
-        if: "github.event.inputs.deployment_target == 'extended'"
+        if: ${{ github.event.inputs.deployment_target == 'extended' }}
         run: pytest -vs -n 3 -m extended --reruns 2 --alluredir=allure-results
         continue-on-error: true
         
       - name: Run all tests
-        if: "github.event.inputs.deployment_target == 'all'"
+        if: ${{ github.event.inputs.deployment_target == 'all' }}
         run: pytest -vs -n 3 --reruns 2 --alluredir=allure-results
         continue-on-error: true
         
