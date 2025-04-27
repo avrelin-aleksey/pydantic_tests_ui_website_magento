@@ -1,6 +1,6 @@
 name: Python autotest-2
 
-on:
+on: [push]
   workflow_dispatch:
     inputs:
       deployment_target:
