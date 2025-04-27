@@ -17,3 +17,8 @@ class TestAccountCreation:
 
         # Проверяем блоки с акциями
         sale_page.assert_promo_blocks_match_expected(data_for_test.expected_promo)
+
+    def test_math():
+        a = 2
+        b = 4
+        a + b == 10
